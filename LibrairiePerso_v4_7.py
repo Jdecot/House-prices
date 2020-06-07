@@ -50,7 +50,7 @@ def discretise_1col_quali(col, colname, regle):
         return newColPandas
 
 def discretise_1col_quanti(col, colname, regle):
-	#Left cap excluded, right cap included
+    #Left cap excluded, right cap included
     newCol = []
     newColPandas = pd.DataFrame()
     ligne = 0 
@@ -87,11 +87,11 @@ def discretise_1col_quanti(col, colname, regle):
 
 def runModels1DS(dataset, name, X, y, models):
     
-	#This function take a dataset in entry
-	#a name, like "train" or "test" 
-	#a list of independent features X
-	#a target feature y
-	#An object containing models to use
+    #This function take a dataset in entry
+    #a name, like "train" or "test" 
+    #a list of independent features X
+    #a target feature y
+    #An object containing models to use
 
     preds = pd.DataFrame()
     preds = copy.deepcopy(dataset)
@@ -207,9 +207,9 @@ def stepwise_selection(X, y,
 
 
 def corr_quali_quanti(x,y):
-	#Attention eta_squared(x,y est réservé aux corrélations quali/quanti
-	# x = qualitative
-	# y = quantitative
+    #Attention eta_squared(x,y est réservé aux corrélations quali/quanti
+    # x = qualitative
+    # y = quantitative
 
     moyenne_y = y.mean()
     classes = []
@@ -222,14 +222,14 @@ def corr_quali_quanti(x,y):
     return SCE/SCT
 
 def corr_quanti_quanti(x,y):
-	#Cette fonction s'applique aux corrélations  Dicho/Quanti ou Quanti/Quanti
-	return np.corrcoef(x, y)[0,1]
+    #Cette fonction s'applique aux corrélations  Dicho/Quanti ou Quanti/Quanti
+    return np.corrcoef(x, y)[0,1]
 
 
 
 def DistributionPlot(RedFunction, BlueFunction, RedName, BlueName, Title):
-	#Cette fonction produit un graphique de distributions avec deux courbes, une pour le train et l'autre pour le test
-	#RedFunction et BlueFunction sont deux arrays contenant des valeurs prédites et des valeurs constaté.
+    #Cette fonction produit un graphique de distributions avec deux courbes, une pour le train et l'autre pour le test
+    #RedFunction et BlueFunction sont deux arrays contenant des valeurs prédites et des valeurs constaté.
     width = 12
     height = 10
     plt.figure(figsize=(width, height))
@@ -247,10 +247,10 @@ def DistributionPlot(RedFunction, BlueFunction, RedName, BlueName, Title):
 
 def PollyPlot(xtrain, xtest, y_train, y_test, lr,poly_transform):
 
-	#Cette fonction permet de supperposer deux nuages de points, le test et le train
-	#Ces nuages de points sont constitué chacun d'une variable explicative et d'une expliqué
-	#exemple ==> xtrain la taille d'une maison et y_train son prix. 
-	#Une regression linéaire polynomial est alors utilisé et la courbe est inscrite dans le graphique. 
+    #Cette fonction permet de supperposer deux nuages de points, le test et le train
+    #Ces nuages de points sont constitué chacun d'une variable explicative et d'une expliqué
+    #exemple ==> xtrain la taille d'une maison et y_train son prix. 
+    #Une regression linéaire polynomial est alors utilisé et la courbe est inscrite dans le graphique. 
     width = 12
     height = 10
     plt.figure(figsize=(width, height))
@@ -277,8 +277,8 @@ def PollyPlot(xtrain, xtest, y_train, y_test, lr,poly_transform):
 
 
 def f(order, test_data):
-	#cette fonction permet d'avoir un graphique interactif pour tester différents polynomes et taille d'échantillon test
-	# pour l'utilise avec cette commande : interact(f, order=(0, 6, 1), test_data=(0.05, 0.95, 0.05))
+    #cette fonction permet d'avoir un graphique interactif pour tester différents polynomes et taille d'échantillon test
+    # pour l'utilise avec cette commande : interact(f, order=(0, 6, 1), test_data=(0.05, 0.95, 0.05))
     x_train, x_test, y_train, y_test = train_test_split(x_data, y_data, test_size=test_data, random_state=0)
     pr = PolynomialFeatures(degree=order)
     x_train_pr = pr.fit_transform(x_train[['horsepower']])
@@ -318,7 +318,7 @@ def discretisationSupervise(X_train, X_test, y_train, y_test, getPlot, getClasse
         #Pourcentage d'occurence minimum dans une classe
         occurenceMin = round(len(X_train)*min_samples_split_percent/100)
         if (occurenceMin==0):
-        	occurenceMin=2
+            occurenceMin=2
         for i in [2]:
             dtr = DecisionTreeRegressor(max_depth = i, min_samples_split = occurenceMin)
             dtr.fit(rwrk_Xtrain,rwrk_ytrain)
@@ -436,7 +436,7 @@ def PolynomialFeaturesCorr(X_train, X_test, y_train, y_test, prOrder):
     return prRsquared
 
 def PolynomialRegrTransformationReturnDF(df, varToTransform, prOrder):
-	#Cette fonction prends en entrée deux data frame et les renvoi dans une liste après qu'ils aient été transformé
+    #Cette fonction prends en entrée deux data frame et les renvoi dans une liste après qu'ils aient été transformé
     from sklearn.preprocessing import PolynomialFeatures
     from sklearn_pandas import DataFrameMapper
     from sklearn.preprocessing import StandardScaler
@@ -492,73 +492,237 @@ def PolynomialRegrTransformationReturnDF(df, varToTransform, prOrder):
 
 
 def replaceByGroupMedian(dfHavingNAN, dfContainingValue, columnContainingNAN, columnUsedForJoin):
-	'''
-	Cette fonction a été développé pour effectuer des remplacements de valeur NAN
-	On groupe par exemple les lignes représentant des quartiers de ville (columnUsedForJoin) 
-	et prends leur médiane pour une colonne donnée (columnContainingNAN)
-	Dans un autre dataset (ou le même), on trouve toute les lignes qui ont des valeurs NAN, 
-	on regarde le quartier et on va récupérer la valeur médianne du dataset de train
+    '''
+    Cette fonction a été développé pour effectuer des remplacements de valeur NAN
+    On groupe par exemple les lignes représentant des quartiers de ville (columnUsedForJoin) 
+    et prends leur médiane pour une colonne donnée (columnContainingNAN)
+    Dans un autre dataset (ou le même), on trouve toute les lignes qui ont des valeurs NAN, 
+    on regarde le quartier et on va récupérer la valeur médianne du dataset de train
 
-	s'utile comme suit : 
-	X_train_medianes = X_train.groupby("Neighborhood")["Price"].median().to_frame()
-	replaceByGroupMedian([X_train, X_test], X_train_medianes, "Price", "Neighborhood")
-	'''
+    s'utile comme suit : 
+    X_train_medianes = X_train.groupby("Neighborhood")["Price"].median().to_frame()
+    replaceByGroupMedian([X_train, X_test], X_train_medianes, "Price", "Neighborhood")
+    '''
 
-	for df in dfHavingNAN:
-		listLignes = df[df[columnContainingNAN].isnull()].index   
-		for ind in listLignes: 
-			cellWithNAN = df[columnContainingNAN][ind]
-			cellUsedForJoin = df[columnUsedForJoin][ind]
-			targetValue = dfContainingValue.loc[cellUsedForJoin, columnContainingNAN]
-			df[columnContainingNAN][ind]  = targetValue
-
-
+    for df in dfHavingNAN:
+        listLignes = df[df[columnContainingNAN].isnull()].index
+        for ind in listLignes:
+            cellWithNAN = df[columnContainingNAN][ind]
+            cellUsedForJoin = df[columnUsedForJoin][ind]
+            targetValue = dfContainingValue.loc[cellUsedForJoin, columnContainingNAN]
+            df.loc[ind, columnContainingNAN] = targetValue
 
 
-''' Read dataframe from clipboard '''
-
-'''
-#copy to clipboard a dataframe
-lr.to_clipboard(sep=';')
-
-#import from clipboard a dataframe
-fromClip = pd.read_clipboard(sep=';', 
-                       index_col=0, 
-                       )
-fromClip
-'''
-
-'''
-import importlib
-importlib.reload(julien)
-'''
 
 
-def scale_features(dataset, listeVarConcerned, scaleMethod) :
+def scale_features(dataset, features, scaleMethod) :
     from sklearn import preprocessing
-    if (listeVarConcerned == [] or listeVarConcerned == ''):
-        listeVarConcerned = dataset.columns
+    if (features == [] or features == ''):
+        features = dataset.columns
     df = copy.deepcopy(dataset)
     
     if(scaleMethod == 0):
         return df
     
     if(scaleMethod == 1):
-        for var in df[listeVarConcerned] :
+        for var in df[features] :
                 df[var] = (df[var]-df[var].min()) / (df[var].max()-df[var].min())
     
     if(scaleMethod == 2):
-        for var in df[listeVarConcerned] :
+        for var in df[features] :
                 df[var]=df[var]/df[var].max()
                 
     if(scaleMethod == 3):
-        for var in df[listeVarConcerned] :                
+        for var in df[features] :                
                 df[var] = (df[var]-df[var].mean()) / df[var].std()
                 
     if(scaleMethod == 4):
-        df = preprocessing.StandardScaler().fit(df[listeVarConcerned]).transform(df[listeVarConcerned])
+        df = preprocessing.StandardScaler().fit(df[features]).transform(df[features])
         df = pd.DataFrame(data=df[0:,0:],    
                       index=dataset.index,    
-                      columns=dataset[listeVarConcerned].columns)
+                      columns=dataset[features].columns)
     
     return df
+
+
+
+''' ---------------------- FEATURES SELECTION ---------------------- '''
+
+def RFR_select_features(X, y):
+    from sklearn.ensemble import RandomForestRegressor
+
+    feat_names = X.columns
+    rf = RandomForestRegressor()
+    rf.fit(X, y)
+
+    soluce = sorted(zip(map(lambda x: round(x, 4), rf.feature_importances_), feat_names), 
+                 reverse=True)
+    new_list = [tuple(i[1] for i in soluce)]
+    x = []
+    for item in new_list:
+        x.extend(item)
+    return x, soluce
+
+
+def ExhaustiveFeatureSelector(X,y, min_features=1 , max_features=4):
+    from mlxtend.feature_selection import ExhaustiveFeatureSelector as EFS
+    from sklearn.linear_model import LinearRegression
+    lr = LinearRegression()
+
+    efs1 = EFS(lr, 
+               min_features=min_features,
+               max_features=max_features,
+               scoring='r2',
+               print_progress=True,
+               cv=5)
+
+    efs1 = efs1.fit(X,y)
+
+    #print('Best subset:', efs1.best_idx_)
+    print('Best subset (corresponding names):', efs1.best_feature_names_)
+    print('Best R² score: %.2f' % efs1.best_score_ )
+    return efs1.best_feature_names_ , efs1.best_score_
+
+
+
+
+def recursive_feature_addition(X_train, y_train, X_test, y_test, model):
+    #from sklearn.linear_model import LinearRegression
+    # array to hold the feature to be keept.
+    colonnes = X_train.columns
+    features_to_keep = [colonnes[0]]
+
+    # set this value according to you.
+    threshold = 0.0001
+
+    # create your prefered model and  fit it to the training data.
+    model_one_feature = model
+    model_one_feature.fit(X_train[features_to_keep], y_train)
+
+    # evaluate against your metric.
+    y_pred_test = model_one_feature.predict(X_test[features_to_keep])
+    score =  rsquared(y_test, y_pred_test)
+
+    # start iterating from the feature.
+    for feature in colonnes[1:]:    
+        # fit model with  the selected features and the feature to be evaluated
+        #model = LinearRegression()
+        model.fit(X_train[features_to_keep + [feature]], y_train)
+        y_pred_test = model.predict(X_test[features_to_keep + [feature]])
+        score_int =  rsquared(y_test, y_pred_test)
+
+        # determine the drop in the roc-auc
+        diff_score = score_int - score
+
+        # compare the drop in roc-auc with the threshold
+        if diff_score >= threshold:
+            
+            # if the increase in the roc is bigger than the threshold
+            # we keep the feature and re-adjust the roc-auc to the new value
+            # considering the added feature
+            score = score_int
+            features_to_keep.append(feature)
+
+    # print the feature to keep.
+    #print(features_to_keep)
+    print(score)
+    print(len(features_to_keep))
+    return features_to_keep, score
+
+def feature_behavior_observation(X_train, y_train, X_test, y_test, model):
+    import matplotlib.pyplot as plt
+    models2 = {
+        'model' : {
+            'label' : 'Model',
+            'function' : model
+        },
+    }
+    rsquared_list = []
+    preds= pd.DataFrame()
+
+    for i in range(1,len(X_train.columns)+1):
+
+        model.fit(X_train[X_train.columns[0:i]], y_train)
+
+        pred = model.predict(X_test[X_test.columns[0:i]])
+        preds['temp'] = pred.astype(float)
+        preds['pred'] = preds['temp'].clip(lower=0)
+        preds.drop(['temp'], axis=1, inplace=True)
+        r2 = rsquared(preds['pred'], y_test)
+
+        rsquared_list = rsquared_list + [r2]
+    #print(rsquared_list)
+    print('max R² = ' + str(round(rsquared_list[rsquared_list.index(max(rsquared_list))],3)))
+
+    print('Index of max R² : ' + str(rsquared_list.index(max(rsquared_list))))
+    print(X_train.columns[0:rsquared_list.index(max(rsquared_list))])
+
+
+    plt.figure(figsize=(10,3))
+    plt.plot(range(0, i), rsquared_list)
+    plt.fill_between(range(0, i),
+                     rsquared_list,
+                     alpha=.10)
+    plt.legend(('Accuracy legen'))
+    plt.ylabel('Accuracy')
+    plt.xlabel('K')
+    plt.xticks(range(1, i))
+    plt.show()
+
+
+def recursive_feature_elimination_rf(X_train, y_train, X_test, y_test, model, tol=0.0001):
+    #https://github.com/Yimeng-Zhang/feature-engineering-and-feature-selection/blob/master/feature_selection/hybrid.py
+    from sklearn.linear_model import LinearRegression
+
+    features_to_remove = []
+    count = 1
+    # initial model using all the features
+    model_all_features = model
+    model_all_features.fit(X_train, y_train)
+    y_pred_test = model_all_features.predict(X_test)
+    auc_score_all = rsquared(y_test, y_pred_test)
+    
+    for feature in X_train.columns:
+        #print()
+        #print('testing feature: ', feature, ' which is feature ', count,
+        #  ' out of ', len(X_train.columns))
+        count += 1
+        
+        # fit model with all variables minus the removed features
+        # and the feature to be evaluated
+        model.fit(X_train.drop(features_to_remove + [feature], axis=1), y_train)
+        y_pred_test = model.predict(
+                    X_test.drop(features_to_remove + [feature], axis=1))
+        auc_score_int = rsquared(y_test, y_pred_test)
+        #print('New Test ROC AUC={}'.format((auc_score_int)))
+    
+        # print the original roc-auc with all the features
+        #print('All features Test ROC AUC={}'.format((auc_score_all)))
+    
+        # determine the drop in the roc-auc
+        diff_auc = auc_score_all - auc_score_int
+    
+        # compare the drop in roc-auc with the tolerance
+        if diff_auc >= tol:
+            #print('Drop in ROC AUC={}'.format(diff_auc))
+            #print('keep: ', feature)
+            score = diff_auc
+            
+        else:
+            #print('Drop in ROC AUC={}'.format(diff_auc))
+            #print('remove: ', feature)
+            
+            # if the drop in the roc is small and we remove the
+            # feature, we need to set the new roc to the one based on
+            # the remaining features
+            auc_score_all = auc_score_int
+            score = auc_score_int
+            
+            # and append the feature to remove to the list
+            features_to_remove.append(feature)
+    print('score : ' + str(score))
+    print('total features to remove: ', len(features_to_remove))  
+    features_to_keep = [x for x in X_train.columns if x not in features_to_remove]
+    print('total features to keep: ', len(features_to_keep))
+    
+    return features_to_keep, score
