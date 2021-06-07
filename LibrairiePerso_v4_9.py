@@ -7,6 +7,7 @@ from sklearn.metrics import mean_squared_error, r2_score
 import scipy
 from scipy import stats
 
+
 def hellojuju():
     print('Hello juju')
 
@@ -130,15 +131,15 @@ def afficheResults(train_preds, test_preds, y, models):
         print('Train : ', end="")
 
         print("R² = "+"{:.1%} ".format(r2_score(train_preds[y], train_preds['pred_train_' + model])), end="")
-        print(", rsquared = "+"{:.1%} ".format(rsquared(train_preds[y], train_preds['pred_train_' + model])), end="")
-        print(", corr = "+"{:.1%} ".format(train_preds[y].corr(train_preds['pred_train_' + model])), end="")
+        #print(", rsquared = "+"{:.1%} ".format(rsquared(train_preds[y], train_preds['pred_train_' + model])), end="")
+        #print(", corr = "+"{:.1%} ".format(train_preds[y].corr(train_preds['pred_train_' + model])), end="")
         print(', MSE = %.2f'
           % mean_squared_error(train_preds[y], train_preds['pred_train_' + model]))
 
         print('Test : ', end="")
         print("R² = "+"{:.1%} ".format(r2_score(test_preds[y], test_preds['pred_test_' + model])), end="")
-        print(", rsqaured = "+"{:.1%} ".format(rsquared(test_preds[y], test_preds['pred_test_' + model])), end="")
-        print(", corr = "+"{:.1%} ".format(test_preds[y].corr(test_preds['pred_test_' + model])), end="")
+        #print(", rsqaured = "+"{:.1%} ".format(rsquared(test_preds[y], test_preds['pred_test_' + model])), end="")
+        #print(", corr = "+"{:.1%} ".format(test_preds[y].corr(test_preds['pred_test_' + model])), end="")
         print(', MSE = %.2f'
               % mean_squared_error(test_preds[y],  test_preds['pred_test_' + model]))
         print()
@@ -184,7 +185,8 @@ def stepwise_selection(X, y,
             new_pval[new_column] = model.pvalues[new_column]
         best_pval = new_pval.min()
         if best_pval < threshold_in:
-            best_feature = new_pval.argmin()
+            #best_feature = new_pval.argmin()
+            best_feature = new_pval.keys()[new_pval.argmin()]
             included.append(best_feature)
             changed=True
             if verbose:
@@ -197,7 +199,8 @@ def stepwise_selection(X, y,
         worst_pval = pvalues.max() # null if pvalues is empty
         if worst_pval > threshold_out:
             changed=True
-            worst_feature = pvalues.argmax()
+            #worst_feature = pvalues.argmax()
+            worst_feature = pvalues.keys()[pvalues.argmax()]
             included.remove(worst_feature)
             if verbose:
                 print('Drop {:30} with p-value {:.6}'.format(worst_feature, worst_pval))
@@ -437,6 +440,7 @@ def PolynomialFeaturesCorr(X_train, X_test, y_train, y_test, prOrder):
 
 def PolynomialRegrTransformationReturnDF(df, varToTransform, prOrder):
     #Cette fonction prends en entrée deux data frame et les renvoi dans une liste après qu'ils aient été transformé
+
     from sklearn.preprocessing import PolynomialFeatures
     from sklearn_pandas import DataFrameMapper
     from sklearn.preprocessing import StandardScaler
@@ -491,32 +495,33 @@ def PolynomialRegrTransformationReturnDF(df, varToTransform, prOrder):
 
 
 
-def replaceByGroupMedian(dfHavingNAN, dfContainingValue, columnContainingNAN, columnUsedForJoin):
+def replaceByGroupMedian(df, tableOfReplacements, columnContainingNAN, columnUsedForJoin):
     '''
-    Cette fonction a été développé pour effectuer des remplacements de valeur NAN
-    On groupe par exemple les lignes représentant des quartiers de ville (columnUsedForJoin) 
-    et prends leur médiane pour une colonne donnée (columnContainingNAN)
-    Dans un autre dataset (ou le même), on trouve toute les lignes qui ont des valeurs NAN, 
-    on regarde le quartier et on va récupérer la valeur médianne du dataset de train
+    Cette fonction a été développé pour effectuer des remplacements de valeur NAN dans un dataset
+    1 - On regarde le dataset train, on groupe les lignes selon une variable, par exemple neighborhood
+	2 - pour chaque modalité de neighoborhood, on récupère la valeure médiane d'une autre variable, par exemple le prix
+	3 - ainsi on obtient un df associant à chaque quartier un prix : quartier 1 = 100k, quartier 2 = 150k, quartier 3 = 128k par exemple
+	on fait cela de cette façon : X_train_price_medians_by_Neighborhood = X_train.groupby("Neighborhood")["price"].median().to_frame()
+	X_train_price_medians_by_Neighborhood est le paramètre tableOfReplacements envoyé à la fonction
 
-    s'utile comme suit : 
-    X_train_medianes = X_train.groupby("Neighborhood")["Price"].median().to_frame()
-    replaceByGroupMedian([X_train, X_test], X_train_medianes, "Price", "Neighborhood")
+	A partir de cette tableOfReplacements, on veut remplacer les valeur NAN dans le dataset df (paramètre de la fonction)
+	On regroupe donc les lignes selon la même variable (columnUsedForJoin)
+	On effectue le remplacement des NAN dans la colonne concerné (columnContainingNAN)
     '''
 
-    for df in dfHavingNAN:
-        listLignes = df[df[columnContainingNAN].isnull()].index
-        for ind in listLignes:
-            cellWithNAN = df[columnContainingNAN][ind]
-            cellUsedForJoin = df[columnUsedForJoin][ind]
-            targetValue = dfContainingValue.loc[cellUsedForJoin, columnContainingNAN]
-            df.loc[ind, columnContainingNAN] = targetValue
+    listLignes = df[df[columnContainingNAN].isnull()].index
+    for ind in listLignes:
+        cellWithNAN = df[columnContainingNAN][ind]
+        cellUsedForJoin = df[columnUsedForJoin][ind]
+        targetValue = tableOfReplacements.loc[cellUsedForJoin, columnContainingNAN]
+        df.loc[ind, columnContainingNAN] = targetValue
 
 
 
 
 def scale_features(dataset, features, scaleMethod) :
     from sklearn import preprocessing
+    import copy
     if (features == [] or features == ''):
         features = dataset.columns
     df = copy.deepcopy(dataset)
